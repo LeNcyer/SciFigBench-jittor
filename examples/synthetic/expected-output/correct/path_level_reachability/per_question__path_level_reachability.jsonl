@@ -1,0 +1,2 @@
+{"qid": "SYN-path-positive", "task": "path_level_reachability", "gt": "true", "pred_raw": "true", "pred_parsed": "true", "score": 1.0, "parse_ok": true, "status": "ok", "stratum": {"label": "positive", "neg_subtype": null, "path_len_bucket": "2"}}
+{"qid": "SYN-path-reverse", "task": "path_level_reachability", "gt": "false", "pred_raw": "false", "pred_parsed": "false", "score": 1.0, "parse_ok": true, "status": "ok", "stratum": {"label": "negative", "neg_subtype": "reverse_path", "path_len_bucket": null}}

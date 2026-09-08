@@ -1,0 +1,57 @@
+{
+  "primary_metric": {
+    "name": "set-ANLS*",
+    "value": 0.3333333333333333
+  },
+  "subgroups": {
+    "by_n_gt_neighbors": {
+      "0": {
+        "n": 1,
+        "mean": 0.0
+      },
+      "1": {
+        "n": 1,
+        "mean": 0.0
+      },
+      "2-3": {
+        "n": 1,
+        "mean": 1.0
+      }
+    },
+    "by_target_type": {
+      "both": {
+        "n": 2,
+        "mean": 0.5
+      },
+      "in_only": {
+        "n": 1,
+        "mean": 0.0
+      }
+    },
+    "by_variant": {
+      "in": {
+        "n": 2,
+        "mean": 0.5
+      },
+      "out": {
+        "n": 1,
+        "mean": 0.0
+      }
+    }
+  },
+  "toolkit_version": "0.1.0",
+  "schema_version": "1.0",
+  "dataset_version": "synthetic-v1",
+  "task": "information_flow_tracing",
+  "n_questions": 3,
+  "n_submitted": 2,
+  "n_missing": 1,
+  "n_parse_fail": 1,
+  "coverage": 0.6666666666666666,
+  "prediction_field": "response",
+  "latex_normalize": true,
+  "input_sha256": {
+    "qa": "cc7623e72fced1ddfb32b8152b22c6e3ab8b861c487fa20e5e3052083e65b806",
+    "predictions": "3c51195fd10303b193f4a0152e8ab2b654b45b81f0c04f4fbc20112bfcb8d93e"
+  }
+}

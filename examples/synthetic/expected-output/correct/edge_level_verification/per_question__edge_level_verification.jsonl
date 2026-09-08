@@ -1,0 +1,2 @@
+{"qid": "SYN-edge-positive", "task": "edge_level_verification", "gt": "true", "pred_raw": "true", "pred_parsed": "true", "score": 1.0, "parse_ok": true, "status": "ok", "stratum": {"label": "positive", "neg_subtype": null}}
+{"qid": "SYN-edge-reverse", "task": "edge_level_verification", "gt": "false", "pred_raw": "false", "pred_parsed": "false", "score": 1.0, "parse_ok": true, "status": "ok", "stratum": {"label": "negative", "neg_subtype": "reverse"}}

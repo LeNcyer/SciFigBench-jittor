@@ -1,0 +1,60 @@
+{
+  "primary_metric": {
+    "name": "ANLS",
+    "value": 1.0
+  },
+  "subgroups": {
+    "by_K": {
+      "1": {
+        "n": 1,
+        "mean": 1.0
+      },
+      "3": {
+        "n": 1,
+        "mean": 1.0
+      }
+    },
+    "by_area_bucket": {
+      "synthetic": {
+        "n": 1,
+        "mean": 1.0
+      }
+    },
+    "by_len_bucket": {
+      "synthetic": {
+        "n": 1,
+        "mean": 1.0
+      }
+    },
+    "by_subtask": {
+      "flow_path": {
+        "n": 1,
+        "mean": 1.0
+      },
+      "single": {
+        "n": 1,
+        "mean": 1.0
+      }
+    }
+  },
+  "additional_metrics": {
+    "set-ANLS*": {
+      "value": 1.0
+    }
+  },
+  "toolkit_version": "0.1.0",
+  "schema_version": "1.0",
+  "dataset_version": "synthetic-v1",
+  "task": "dense_content_perception",
+  "n_questions": 2,
+  "n_submitted": 2,
+  "n_missing": 0,
+  "n_parse_fail": 0,
+  "coverage": 1.0,
+  "prediction_field": "response",
+  "latex_normalize": true,
+  "input_sha256": {
+    "qa": "1ced134224f5b8ef47c816b8d9a28315907bc05a1a2eaa311c9524b389424700",
+    "predictions": "72b4a869197dac9bfa2ab1c838d26a540b010c644df407ae82dbbc67c55cae7d"
+  }
+}

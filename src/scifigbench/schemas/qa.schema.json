@@ -1,0 +1,266 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SciFigBench QA row",
+  "type": "object",
+  "required": [
+    "qid",
+    "task",
+    "sample_id",
+    "image_path",
+    "image_size",
+    "prompt",
+    "answer"
+  ],
+  "properties": {
+    "qid": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+    },
+    "task": {
+      "enum": [
+        "dense_content_perception",
+        "edge_level_verification",
+        "node_level_degree_counting",
+        "path_level_reachability",
+        "information_flow_tracing"
+      ]
+    },
+    "sample_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "image_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "image_size": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "meta": {
+      "type": "object"
+    },
+    "dataset_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "red_box_xyxy": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "blue_box_xyxy": {
+      "type": "array",
+      "prefixItems": [
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        },
+        {
+          "type": "number",
+          "minimum": 0
+        }
+      ],
+      "items": false,
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "boxes_xyxy": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "number",
+            "minimum": 0
+          },
+          {
+            "type": "number",
+            "minimum": 0
+          }
+        ],
+        "items": false,
+        "minItems": 4,
+        "maxItems": 4
+      },
+      "minItems": 1,
+      "maxItems": 6
+    },
+    "colors": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "red",
+          "orange",
+          "yellow",
+          "green",
+          "blue",
+          "violet"
+        ]
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "maxItems": 6
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "task": {
+            "const": "dense_content_perception"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "subtask",
+          "boxes_xyxy",
+          "colors"
+        ],
+        "properties": {
+          "subtask": {
+            "enum": [
+              "single",
+              "flow_path"
+            ]
+          },
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "task": {
+            "enum": [
+              "edge_level_verification",
+              "path_level_reachability"
+            ]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "red_box_xyxy",
+          "blue_box_xyxy"
+        ],
+        "properties": {
+          "answer": {
+            "enum": [
+              true,
+              false,
+              "true",
+              "false"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "task": {
+            "const": "node_level_degree_counting"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "red_box_xyxy"
+        ],
+        "properties": {
+          "answer": {
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "string",
+                "pattern": "^[0-9]+$"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "task": {
+            "const": "information_flow_tracing"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "answer": {
+            "oneOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

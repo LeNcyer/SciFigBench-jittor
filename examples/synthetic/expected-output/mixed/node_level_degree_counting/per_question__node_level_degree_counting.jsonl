@@ -1,0 +1,2 @@
+{"qid": "SYN-degree-in", "task": "node_level_degree_counting", "gt": 3, "pred_raw": "3", "pred_parsed": 3, "score": 1.0, "parse_ok": true, "status": "ok", "stratum": {"variant": "in", "degree_bucket": "3"}}
+{"qid": "SYN-degree-out", "task": "node_level_degree_counting", "gt": 1, "pred_raw": "0", "pred_parsed": 0, "score": 0.0, "parse_ok": true, "status": "ok", "stratum": {"variant": "out", "degree_bucket": "1"}}

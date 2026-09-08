@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SciFigBench prediction row",
+  "type": "object",
+  "required": [
+    "qid"
+  ],
+  "properties": {
+    "qid": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$"
+    },
+    "response": {
+      "type": [
+        "string",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "pred": {
+      "type": [
+        "string",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "prediction": {
+      "type": [
+        "string",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "answer": {
+      "type": [
+        "string",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "model_output": {
+      "type": [
+        "string",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    },
+    "output": {
+      "type": [
+        "string",
+        "array",
+        "boolean",
+        "number",
+        "null"
+      ],
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "anyOf": [
+    {
+      "required": [
+        "response"
+      ]
+    },
+    {
+      "required": [
+        "pred"
+      ]
+    },
+    {
+      "required": [
+        "prediction"
+      ]
+    },
+    {
+      "required": [
+        "answer"
+      ]
+    },
+    {
+      "required": [
+        "model_output"
+      ]
+    },
+    {
+      "required": [
+        "output"
+      ]
+    }
+  ]
+}

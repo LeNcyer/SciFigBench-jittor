@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "Please cite this toolkit version when using the evaluation software."
+type: software
+title: "SciFigBench Toolkit: Evaluation Code Preview"
+authors:
+  - name: "SciFigBench authors"
+version: 0.1.0
+repository-code: "https://github.com/LeNcyer/SciFigBench-toolkit"
+license: MIT
+abstract: "Evaluation and rendering tools for five scientific figure understanding tasks, with synthetic examples."

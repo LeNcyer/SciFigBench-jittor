@@ -1,0 +1,2 @@
+{"qid": "SYN-dense-single", "response": ["Encoder"]}
+{"qid": "SYN-dense-path", "response": ["Input", "Encoder", "Output"]}

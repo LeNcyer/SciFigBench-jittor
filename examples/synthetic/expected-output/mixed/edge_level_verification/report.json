@@ -1,0 +1,53 @@
+{
+  "primary_metric": {
+    "name": "accuracy",
+    "value": 0.5
+  },
+  "subgroups": {
+    "by_label": {
+      "negative": {
+        "n": 1,
+        "mean": 0.0
+      },
+      "positive": {
+        "n": 1,
+        "mean": 1.0
+      }
+    },
+    "by_neg_subtype": {
+      "n/a": {
+        "n": 1,
+        "mean": 1.0
+      },
+      "reverse": {
+        "n": 1,
+        "mean": 0.0
+      }
+    }
+  },
+  "additional_metrics": {
+    "hard_neg_accuracy": {
+      "n": 1,
+      "value": 0.0
+    },
+    "reverse_neg_accuracy": {
+      "n": 1,
+      "value": 0.0
+    }
+  },
+  "toolkit_version": "0.1.0",
+  "schema_version": "1.0",
+  "dataset_version": "synthetic-v1",
+  "task": "edge_level_verification",
+  "n_questions": 2,
+  "n_submitted": 1,
+  "n_missing": 1,
+  "n_parse_fail": 0,
+  "coverage": 0.5,
+  "prediction_field": "response",
+  "latex_normalize": true,
+  "input_sha256": {
+    "qa": "c3b20dd704df2553d7f149ed8795861f59852f7245c53266b108c964dd918c53",
+    "predictions": "5d660cfd3cf811a0187719023519ecab4c69d182411fa228872a2989b05c58de"
+  }
+}

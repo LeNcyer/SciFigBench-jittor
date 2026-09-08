@@ -1,0 +1,43 @@
+{
+  "primary_metric": {
+    "name": "accuracy",
+    "value": 0.5
+  },
+  "subgroups": {
+    "by_degree_bucket": {
+      "1": {
+        "n": 1,
+        "mean": 0.0
+      },
+      "3": {
+        "n": 1,
+        "mean": 1.0
+      }
+    },
+    "by_variant": {
+      "in": {
+        "n": 1,
+        "mean": 1.0
+      },
+      "out": {
+        "n": 1,
+        "mean": 0.0
+      }
+    }
+  },
+  "toolkit_version": "0.1.0",
+  "schema_version": "1.0",
+  "dataset_version": "synthetic-v1",
+  "task": "node_level_degree_counting",
+  "n_questions": 2,
+  "n_submitted": 2,
+  "n_missing": 0,
+  "n_parse_fail": 0,
+  "coverage": 1.0,
+  "prediction_field": "response",
+  "latex_normalize": true,
+  "input_sha256": {
+    "qa": "56cd6e0a92a223f57b7e0b2a229ff33c42725f2722d25046fc4d940fd0500d70",
+    "predictions": "918920fe9783938baf9a75722527ded45f236fb7ebe34b6884b4e84e47aa2ecb"
+  }
+}

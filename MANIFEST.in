@@ -1,0 +1,7 @@
+include README.md LICENSE CITATION.cff PROVENANCE.md DATA_AVAILABILITY.md CHANGELOG.md uv.lock
+include .gitignore .gitattributes
+recursive-include .github *.yml
+recursive-include docs *.md
+recursive-include examples *.py *.json *.jsonl *.png *.md
+recursive-include tests *.py
+recursive-include scripts *.py

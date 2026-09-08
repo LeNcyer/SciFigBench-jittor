@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SciFigBench task report",
+  "type": "object",
+  "required": [
+    "toolkit_version",
+    "schema_version",
+    "dataset_version",
+    "task",
+    "n_questions",
+    "n_submitted",
+    "n_missing",
+    "n_parse_fail",
+    "coverage",
+    "primary_metric",
+    "input_sha256",
+    "latex_normalize",
+    "subgroups"
+  ],
+  "properties": {
+    "toolkit_version": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "dataset_version": {
+      "type": "string"
+    },
+    "task": {
+      "enum": [
+        "dense_content_perception",
+        "edge_level_verification",
+        "node_level_degree_counting",
+        "path_level_reachability",
+        "information_flow_tracing"
+      ]
+    },
+    "n_questions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_submitted": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_missing": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "n_parse_fail": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "coverage": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "latex_normalize": {
+      "type": "boolean"
+    },
+    "primary_metric": {
+      "type": "object",
+      "required": [
+        "name",
+        "value"
+      ],
+      "properties": {
+        "name": {
+          "enum": [
+            "accuracy",
+            "ANLS",
+            "set-ANLS*"
+          ]
+        },
+        "value": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "input_sha256": {
+      "type": "object",
+      "required": [
+        "qa",
+        "predictions"
+      ],
+      "properties": {
+        "qa": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "predictions": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "subgroups": {
+      "type": "object"
+    },
+    "additional_metrics": {
+      "type": "object"
+    },
+    "prediction_field": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
