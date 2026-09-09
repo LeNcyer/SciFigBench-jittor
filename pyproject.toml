@@ -3,17 +3,18 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "scifigbench-toolkit"
-version = "0.1.0"
-description = "Evaluation and rendering tools for scientific figure understanding"
+name = "scifigbench-jittor"
+version = "0.2.0"
+description = "Jittor CPU evaluation and rendering tools for scientific figure understanding"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "SciFigBench authors"}]
 dependencies = [
   "Pillow>=10.1,<13",
-  "numpy>=1.24,<3",
+  "jittor==1.3.11.0",
+  "numpy>=1.24,<2",
   "scipy>=1.10,<2",
   "jsonschema>=4.18,<5",
 ]
@@ -25,8 +26,8 @@ dev = ["pytest>=8,<10", "build>=1.2,<2", "ruff>=0.11,<1"]
 scifigbench = "scifigbench.cli:main"
 
 [project.urls]
-Repository = "https://github.com/LeNcyer/SciFigBench-toolkit"
-Issues = "https://github.com/LeNcyer/SciFigBench-toolkit/issues"
+Repository = "https://github.com/LeNcyer/SciFigBench-jittor"
+Issues = "https://github.com/LeNcyer/SciFigBench-jittor/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

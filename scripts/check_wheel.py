@@ -1,4 +1,4 @@
-"""Verify built artifacts and run the installed wheel in a fresh environment."""
+"""Verify artifacts and execute real Jittor CPU operations from an installed wheel."""
 from __future__ import annotations
 
 import argparse
@@ -41,6 +41,7 @@ def check(artifact_dir: Path, work_dir: Path) -> None:
     environment = os.environ.copy()
     environment.pop("PYTHONPATH", None)
     environment["PYTHONNOUSERSITE"] = "1"
+    environment.update({"use_cuda": "0", "use_mkl": "0", "DISABLE_MULTIPROCESSING": "1"})
     environment.setdefault("UV_CACHE_DIR", str(work_dir / "uv-cache"))
     with tempfile.TemporaryDirectory(prefix="wheel-check-", dir=work_dir) as temp:
         scratch = Path(temp).resolve()
@@ -59,18 +60,31 @@ def check(artifact_dir: Path, work_dir: Path) -> None:
             "--constraint", str(constraints), str(wheel),
         ], check=True, cwd=scratch, env=environment)
         subprocess.run([str(command), "--version"], check=True, cwd=scratch, env=environment)
-        probe = (
-            "import sys, scifigbench; from pathlib import Path; "
-            "assert Path(scifigbench.__file__).resolve().is_relative_to(Path(sys.prefix)); "
-            "from scifigbench.io import schema; assert schema('qa')['type'] == 'object'"
-        )
+        probe = """
+import importlib.util
+import sys
+from pathlib import Path
+import scifigbench
+from scifigbench import backend
+from scifigbench.io import schema
+from scifigbench.metrics import anls, set_anls
+assert Path(scifigbench.__file__).resolve().is_relative_to(Path(sys.prefix))
+assert all(schema(kind)['type'] == 'object' for kind in ('qa', 'prediction', 'report'))
+assert all(importlib.util.find_spec(name) is None for name in ('torch', 'accelerate', 'xformers'))
+assert anls('abc', 'abc') == 1
+assert set_anls(['A', 'A'], ['A']) == 0.5
+assert backend.exact_match(10**100 + 1, 10**100) == 0
+info = backend.metadata()
+assert info['name'] == 'jittor' and info['device'] == 'cpu' and info['dtype'] == 'float64'
+assert not any(name in sys.modules for name in ('torch', 'accelerate', 'xformers'))
+"""
         subprocess.run([str(python), "-c", probe], check=True, cwd=scratch, env=environment)
         subprocess.run([
             str(python), str(repo / "examples" / "synthetic" / "run_demo.py"),
             "--data-root", str(repo / "examples" / "synthetic"),
             "--out-dir", str(scratch / "demo"),
         ], check=True, cwd=scratch, env=environment)
-    print("Wheel/source distribution inspection and isolated CLI demo passed.")
+    print("Wheel/source inspection, Jittor CPU execution and isolated CLI demo passed.")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,10 @@
 # Synthetic examples
 
+Run evaluation on Linux/WSL2 with the installed SciFigBench-Jittor package.
+The first scoring run compiles Jittor CPU operators; validation and image rendering
+remain independent of Jittor initialization. Expected reports use schema 1.1 and
+record execution versions. The hand-specified scores below remain unchanged.
+
 One original flow diagram has Input -> Encoder -> Output, two distinct Skip
 nodes pointing into Encoder, and an isolated node. All four edges are directed.
 Encoder therefore has in-degree 3, out-degree 1, and incoming neighbor texts

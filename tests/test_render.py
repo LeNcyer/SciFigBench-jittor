@@ -38,3 +38,15 @@ def test_image_size_mismatch_and_clipping(examples):
         render_qa(bad, examples)
     q["red_box_xyxy"] = [0, 0, 40, 40]
     assert render_qa(q, examples).getpixel((0, 0)) == RGB["red"]
+
+
+def test_case_collisions_rejected_before_writing(examples, write_rows, tmp_path):
+    from scifigbench.cli import main
+
+    rows = load_qa(examples / "qa/edge_level_verification.jsonl")
+    rows[0]["qid"], rows[1]["qid"] = "SYN-case", "SYN-CASE"
+    qa = write_rows("case.jsonl", rows)
+    destination = tmp_path / "images"
+    assert main(["render", "--qa", str(qa), "--data-root", str(examples),
+                 "--out-dir", str(destination)]) == 2
+    assert not destination.exists()

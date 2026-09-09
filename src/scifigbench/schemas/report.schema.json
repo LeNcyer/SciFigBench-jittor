@@ -109,6 +109,30 @@
         "string",
         "null"
       ]
+    },
+    "execution_backend": {
+      "type": "object",
+      "required": ["name", "version", "device", "dtype", "assignment_solver"],
+      "properties": {
+        "name": {"const": "jittor"},
+        "version": {"type": "string", "minLength": 1},
+        "device": {"const": "cpu"},
+        "dtype": {"const": "float64"},
+        "assignment_solver": {
+          "type": "object",
+          "required": ["name", "version"],
+          "properties": {
+            "name": {"const": "scipy"},
+            "version": {"type": "string", "minLength": 1}
+          }
+        }
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"schema_version": {"const": "1.1"}}},
+      "then": {"required": ["execution_backend"]}
+    }
+  ]
 }

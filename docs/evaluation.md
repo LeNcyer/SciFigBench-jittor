@@ -1,5 +1,31 @@
 # Evaluation policy
 
+## Jittor CPU execution
+
+Scoring requires Jittor 1.3.11.0 on Linux or WSL2 with Python 3.10–3.12 and a C++
+compiler. It runs on the CPU without gradients or distributed launchers. A missing
+or failed Jittor runtime is an error; there is no alternative scoring backend.
+
+LaTeX normalization, tokenization, JSON parsing and metadata grouping are Python
+operations. Token sequences are encoded as integer IDs, and a Jittor CPU custom
+operator computes exact Levenshtein distance with two dynamic-programming rows.
+Jittor float64 operations calculate similarities, thresholds, positional scores,
+accuracy, coverage, task means and subgroup means. Integer answers are compared
+using canonical decimal character encodings to preserve values beyond int64.
+
+For set-ANLS*, Jittor builds the similarity matrix and SciPy returns the exact
+assignment indices. Jittor gathers those matches and computes the final score.
+NumPy is used at the Jittor/SciPy data boundary. It is not a fallback scorer.
+Neither PyTorch, Accelerate nor xformers is required or imported by this toolkit.
+
+Jittor compiles on first use and caches its generated code. Keep a compiler
+available for new operators. CLI compiler output is directed to stderr so stdout
+remains valid JSON. Validation and Pillow rendering do not initialize Jittor.
+
+Report schema 1.1 records the Jittor version, CPU device, float64 precision and
+SciPy solver version under `execution_backend`. Scores are checked against the
+previous implementation with an absolute tolerance of 1e-12.
+
 The denominator is the number of QA rows for the selected task. Missing responses
 and parse failures contribute zero, including within subgroups. Coverage counts
 submitted IDs, including malformed answer text; it is not parse success rate.
@@ -44,7 +70,8 @@ flow_path order-independent).
 ## set-ANLS*
 
 Build pairwise ANLS similarities and find the maximum-total one-to-one
-assignment using SciPy. Divide by max(reference_count, prediction_count).
+assignment indices using SciPy. Gather the matches with Jittor and divide by
+max(reference_count, prediction_count).
 Unmatched items score zero, with no approximate fallback at large sizes.
 Repeated labels remain separate occurrences; order does not matter.
 For example, ["A", "A"] versus ["A"] scores 0.5.

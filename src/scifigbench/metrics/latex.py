@@ -424,23 +424,15 @@ def tokenize_latex(s: str | None) -> list[str]:
 # ---------------------------------------------------------------------------
 
 def levenshtein_tokens(a: Sequence[str], b: Sequence[str]) -> int:
-    """Token-level edit distance (insert/delete/substitute each cost 1)."""
-    if a == b:
-        return 0
-    if not a:
-        return len(b)
-    if not b:
-        return len(a)
-    prev = list(range(len(b) + 1))
-    for i, ca in enumerate(a, 1):
-        curr = [i] + [0] * len(b)
-        for j, cb in enumerate(b, 1):
-            ins = curr[j - 1] + 1
-            dele = prev[j] + 1
-            sub = prev[j - 1] + (0 if ca == cb else 1)
-            curr[j] = min(ins, dele, sub)
-        prev = curr
-    return prev[-1]
+    """Exact token edit distance, executed by a Jittor CPU custom operator."""
+    from .. import backend
+
+    with backend.cpu_runtime() as jt:
+        return int(backend.edit_distances(jt, [(a, b)]).item())
+
+
+def _tokens(value: str, normalize: bool) -> list[str]:
+    return tokenize_latex(normalize_latex(value) if normalize else (value or ""))
 
 
 def anls(gt: str, pred: str, *, normalize: bool = True,
@@ -451,54 +443,47 @@ def anls(gt: str, pred: str, *, normalize: bool = True,
     NLS = 1 - editdist / max(len_tokens_gt, len_tokens_pred), zeroed below
     `threshold` (DocVQA / ANLS convention).
     """
-    gt_n = normalize_latex(gt) if normalize else (gt or "")
-    pr_n = normalize_latex(pred) if normalize else (pred or "")
-    g = tokenize_latex(gt_n)
-    p = tokenize_latex(pr_n)
-    if not g and not p:
-        return 1.0
-    if not g or not p:
-        return 0.0
-    d = levenshtein_tokens(g, p)
-    nl = 1.0 - d / max(len(g), len(p))
-    return nl if nl >= threshold else 0.0
+    from .. import backend
+
+    with backend.cpu_runtime() as jt:
+        pairs = [(_tokens(gt, normalize), _tokens(pred, normalize))]
+        return float(backend.similarities(jt, pairs, threshold=threshold).item())
 
 
 def position_anls(gt_list: list[str], pred_list: list[str], *,
                   normalize: bool = True, threshold: float = 0.5) -> float:
-    """Position-aligned ANLS. Pad shorter side with empty strings; both
-    "extra" preds and "missing" preds contribute 0 to the average over
-    max(len_gt, len_pred). Used for dense_content_perception.flow_path where the prompt
-    binds position i to color i."""
+    """Position-aligned ANLS with explicit zero credit for unmatched slots."""
+    from .. import backend
+
     n = max(len(gt_list), len(pred_list))
-    if n == 0:
-        return 1.0
-    s = 0.0
-    for i in range(n):
-        g = gt_list[i] if i < len(gt_list) else ""
-        p = pred_list[i] if i < len(pred_list) else ""
-        if i < len(gt_list) and i < len(pred_list):
-            s += anls(g, p, normalize=normalize, threshold=threshold)
-    return s / n
+    with backend.cpu_runtime() as jt:
+        if not gt_list or not pred_list:
+            return float(jt.array([1.0 if n == 0 else 0.0], dtype="float64").item())
+        pairs = [(_tokens(g, normalize), _tokens(p, normalize))
+                 for g, p in zip(gt_list, pred_list)]
+        scores = backend.similarities(jt, pairs, threshold=threshold)
+        return float((scores.sum() / n).item())
 
 
 def set_anls(gt_list: list[str], pred_list: list[str], *,
              normalize: bool = True, threshold: float = 0.5) -> float:
-    """Order-independent optimal assignment; missing/extra items score zero.
-
-    Repeated strings remain separate occurrences. Only two genuinely empty
-    lists score one. SciPy is required; there is no approximate fallback.
-    """
-    import numpy as np
+    """Jittor similarities and reduction, with SciPy exact assignment indices."""
     from scipy.optimize import linear_sum_assignment
+    from .. import backend
 
     n = max(len(gt_list), len(pred_list))
-    if n == 0:
-        return 1.0
-    similarity = np.zeros((n, n), dtype=float)
-    for i, gt in enumerate(gt_list):
-        for j, pred in enumerate(pred_list):
-            similarity[i, j] = anls(gt, pred, normalize=normalize,
-                                    threshold=threshold)
-    rows, cols = linear_sum_assignment(-similarity)
-    return float(similarity[rows, cols].sum() / n)
+    with backend.cpu_runtime() as jt:
+        if not gt_list or not pred_list:
+            return float(jt.array([1.0 if n == 0 else 0.0], dtype="float64").item())
+        references = [_tokens(value, normalize) for value in gt_list]
+        predictions = [_tokens(value, normalize) for value in pred_list]
+        pairs = [(g, p) for g in references for p in predictions]
+        # Bound custom-op input batches; no per-token Python/Jittor dispatch.
+        chunks = [backend.similarities(jt, pairs[i:i + 256], threshold=threshold)
+                  for i in range(0, len(pairs), 256)]
+        similarity = jt.concat(chunks).reshape((len(references), len(predictions)))
+        # The rectangular assignment is equivalent to zero-padded square matching.
+        rows, cols = linear_sum_assignment(-similarity.numpy())
+        indices = jt.array(rows, dtype="int32") * len(predictions) + jt.array(cols, dtype="int32")
+        matched = similarity.reshape((-1,))[indices]
+        return float((matched.sum() / n).item())

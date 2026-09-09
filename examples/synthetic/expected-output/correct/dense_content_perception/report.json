@@ -42,8 +42,8 @@
       "value": 1.0
     }
   },
-  "toolkit_version": "0.1.0",
-  "schema_version": "1.0",
+  "toolkit_version": "0.2.0",
+  "schema_version": "1.1",
   "dataset_version": "synthetic-v1",
   "task": "dense_content_perception",
   "n_questions": 2,
@@ -52,6 +52,16 @@
   "n_parse_fail": 0,
   "coverage": 1.0,
   "prediction_field": "response",
+  "execution_backend": {
+    "name": "jittor",
+    "version": "1.3.11.0",
+    "device": "cpu",
+    "dtype": "float64",
+    "assignment_solver": {
+      "name": "scipy",
+      "version": "1.15.3"
+    }
+  },
   "latex_normalize": true,
   "input_sha256": {
     "qa": "1ced134224f5b8ef47c816b8d9a28315907bc05a1a2eaa311c9524b389424700",

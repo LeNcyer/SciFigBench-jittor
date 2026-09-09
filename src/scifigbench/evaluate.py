@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from . import SCHEMA_VERSION, __version__
+from . import SCHEMA_VERSION, __version__, backend
 from .io import TASKS, load_predictions, load_qa, sha256_file, validate_schema, write_json
 from .tasks import aggregate, score_question
 
@@ -41,7 +41,8 @@ def evaluate(
         "task": task, "n_questions": len(qa), "n_submitted": len(predictions),
         "n_missing": sum(r["status"] == "missing" for r in rows),
         "n_parse_fail": sum(r["status"] == "parse_failure" for r in rows),
-        "coverage": len(predictions) / len(qa), "prediction_field": field,
+        "coverage": backend.ratio(len(predictions), len(qa)), "prediction_field": field,
+        "execution_backend": backend.metadata(),
         "latex_normalize": normalize,
         "input_sha256": {"qa": sha256_file(qa_path), "predictions": sha256_file(pred_path)},
     })

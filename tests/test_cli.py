@@ -6,7 +6,7 @@ import sys
 def test_installed_cli_from_another_directory(examples, tmp_path):
     cli = [sys.executable, "-m", "scifigbench"]
     version = subprocess.run(cli + ["--version"], cwd=tmp_path, capture_output=True, text=True, check=True)
-    assert version.stdout.strip() == "scifigbench 0.1.0"
+    assert version.stdout.strip() == "scifigbench 0.2.0"
     task = "edge_level_verification"
     args = [
         "evaluate", "--task", task, "--qa", str(examples / "qa" / f"{task}.jsonl"),

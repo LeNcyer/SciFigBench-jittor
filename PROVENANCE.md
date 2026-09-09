@@ -10,7 +10,8 @@ eval/_eval_lib.py and tools/render_eval_input.py.
 Copyright and MIT attribution remain with SciFigBench authors. The upstream
 repository can be referenced at https://github.com/LeNcyer/SciFigBench.
 
-This project starts an independent Git history. No dataset blobs, image
+This project started an independent Git history as SciFigBench-toolkit. Version
+0.2.0 renames it to SciFigBench-jittor and retains that history. No dataset blobs, image
 annotations, private paths or experiment output directories are imported.
 The synthetic assets are generated specifically for this toolkit.
 
@@ -28,3 +29,20 @@ Changes from the upstream evaluator:
 
 Metric formula changes beyond these are not part of this preview. In particular,
 dense single-box scoring still uses only the first parsed string.
+
+## Jittor migration (0.2.0)
+
+Normalization and tokenization retain the upstream implementation. A new Jittor
+CPU C++ operator implements the same two-row token edit-distance recurrence.
+Jittor float64 operations replace Python/NumPy scoring arithmetic and reductions.
+SciPy remains the exact assignment solver; its indices are gathered and reduced
+by Jittor. Rectangular assignment replaces zero-padded square assignment while
+retaining the maximum-cardinality denominator and zero credit for unmatched slots.
+
+The migration includes independent score comparisons and actual CPU operator
+tests. It adds runtime provenance to reports and restores parse-failure isolation
+for oversized integer strings and excessively nested JSON responses. No model
+implementation, weights, PyTorch compatibility layer or inference service is added.
+
+The toolkit code remains MIT licensed. Jittor is a separately installed dependency
+under its own Apache-2.0 license; its source is not vendored into this repository.

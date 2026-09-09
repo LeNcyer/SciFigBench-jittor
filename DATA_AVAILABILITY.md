@@ -18,5 +18,5 @@ After validation, data access instructions will be added here. Hugging Face is
 the intended distribution channel. A future release will identify the exact
 dataset revision, counts, checksums and data card. No release date is committed.
 
-Toolkit version 0.1.0, schema version 1.0 and dataset versions are independent.
+Toolkit version 0.2.0, report schema version 1.1 and dataset versions are independent.
 Unversioned user QA receives dataset_version=unspecified in reports.

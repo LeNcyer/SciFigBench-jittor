@@ -1,12 +1,13 @@
-<h1 align="center">🔬 SciFigBench Toolkit</h1>
+<h1 align="center">🔬 SciFigBench-Jittor</h1>
 
 <p align="center">
   <strong>Read the labels. Follow the arrows. Evaluate scientific figure understanding.</strong>
 </p>
 
 <p align="center">
-  <a href="docs/release-notes.md"><img src="https://img.shields.io/badge/0.1.0-code%20preview-d97706" alt="Version 0.1.0 — code preview"></a>
-  <a href="pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&amp;logoColor=white" alt="Python 3.10 or newer"></a>
+  <a href="docs/release-notes.md"><img src="https://img.shields.io/badge/0.2.0-code%20preview-d97706" alt="Version 0.2.0 — code preview"></a>
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10–3.12-3776AB?logo=python&amp;logoColor=white" alt="Python 3.10 through 3.12"></a>
+  <a href="docs/evaluation.md"><img src="https://img.shields.io/badge/Backend-Jittor%20CPU-e4572e" alt="Jittor CPU evaluation"></a>
   <a href="docs/tasks.md"><img src="https://img.shields.io/badge/Tasks-5-0f766e" alt="Five evaluation tasks"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-6366f1" alt="MIT license"></a>
 </p>
@@ -40,8 +41,8 @@ Scientific figures carry information in both **what they say** and **how their
 parts connect**. SciFigBench studies these abilities through five tasks, from
 reading boxed text to tracing information through a diagram.
 
-This toolkit turns your QA and model responses into task-specific evaluation
-reports, with a shared workflow:
+SciFigBench-Jittor turns your QA and model responses into task-specific evaluation
+reports using **Jittor CPU computation**, with a shared workflow:
 
 **Validate the questions → Render the visual references → Evaluate the responses.**
 
@@ -54,8 +55,9 @@ reports, with a shared workflow:
   Shown here: read the text in red → orange → yellow order.</em>
 </p>
 
-- **Five task scorers.** Accuracy, LaTeX-aware token ANLS, position-aligned ANLS
-  and optimal-assignment set-ANLS*.
+- **Five task scorers, powered by Jittor.** Token edit distance, accuracy,
+  LaTeX-aware ANLS and score reductions execute through Jittor in float64.
+  SciPy supplies the exact assignment indices for set-ANLS*.
 - **An example you can inspect.** Synthetic QA, correct and mixed predictions,
   rendered inputs and expected reports are included.
 - **Results you can trace.** Reports record input hashes, versions, coverage,
@@ -65,8 +67,26 @@ reports, with a shared workflow:
 
 ## 🚀 Quick Start
 
-You need **Python 3.10+**. The included demo runs locally without a GPU, model API
-or external benchmark data.
+You need **Linux (Ubuntu recommended) or WSL2**, **Python 3.10–3.12**, and a C++
+compiler. Evaluation runs on the CPU in one process. No PyTorch, Accelerate,
+xformers, distributed launcher, GPU or model API is required.
+
+On Ubuntu/WSL2, prepare the build dependencies:
+
+~~~bash
+sudo apt-get update
+sudo apt-get install -y build-essential python3-dev python3-venv libomp-dev
+python3 -m venv .venv
+source .venv/bin/activate
+~~~
+
+Use a Python interpreter in the supported range; when installing another Python
+version, install its matching development headers and venv package as well.
+On Windows, run these commands **inside WSL2**. Native Windows and GPU evaluation
+are outside this preview's supported execution environments.
+
+Use Ubuntu 22.04's Python 3.10 for the shortest setup. Jittor's CPU runtime skips
+optional CUDA and MKL initialization when loaded by this toolkit.
 
 From this repository's root, install the toolkit:
 
@@ -74,6 +94,14 @@ From this repository's root, install the toolkit:
 python -m pip install -e .
 scifigbench --version
 ~~~
+
+> [!TIP]
+> Jittor compiles its runtime and evaluation operators on the first scoring run,
+> so the first run takes longer. Keep the compiler available for subsequent runs;
+> compiled artifacts are cached. `validate`, `render` and `--version` do not
+> initialize Jittor. See the [Jittor installation guide](https://cg.cs.tsinghua.edu.cn/jittor/download/)
+> for compiler setup details. For machines with limited RAM, set
+> `DISABLE_MULTIPROCESSING=1` to compile serially; `use_mkl=0` avoids optional MKL setup.
 
 Then run the complete example:
 
@@ -171,7 +199,8 @@ string arrays are supported for the list-answer tasks.
 
 Missing and unparseable predictions score zero, and every QA contributes to the
 task denominator. Reports contain input SHA-256 hashes, software/schema/data
-versions, coverage and subgroup metrics. There is no combined score across the
+versions, Jittor/SciPy versions, CPU/float64 execution metadata, coverage and subgroup metrics.
+There is no combined score across the
 five tasks. Read the [input format](docs/data-format.md) and
 [evaluation policy](docs/evaluation.md) before preparing a custom run.
 
@@ -192,7 +221,7 @@ five tasks. Read the [input format](docs/data-format.md) and
 <details>
 <summary><strong>📦 Packages and installation options</strong></summary>
 
-The distribution package is named `scifigbench-toolkit`; the Python import and
+The distribution package is named `scifigbench-jittor`; the Python import and
 CLI are named `scifigbench`.
 
 - **Source distribution:** code, docs, tests and synthetic examples.
@@ -201,9 +230,14 @@ CLI are named `scifigbench`.
   use a source checkout or source distribution to access the demo files.
 
 Preview assets are prepared for
-[GitHub Releases](https://github.com/LeNcyer/SciFigBench-toolkit/releases).
-There is no PyPI release. Toolkit version **0.1.0**, schema version **1.0** and
+[GitHub Releases](https://github.com/LeNcyer/SciFigBench-jittor/releases).
+There is no PyPI release. Toolkit version **0.2.0**, report schema version **1.1** and
 dataset versions are tracked separately; the example data is **synthetic-v1**.
+QA and prediction formats remain compatible with 0.1.0. The report schema also
+accepts legacy 1.0 reports that do not contain execution metadata.
+
+When migrating from `scifigbench-toolkit`, create a fresh virtual environment:
+the two distributions share the same import name and must not be installed together.
 
 </details>
 
@@ -225,16 +259,17 @@ uv sync --frozen --extra dev
 uv run --frozen --extra dev python -m pytest
 ~~~
 
-The [CI workflow](.github/workflows/tests.yml) is configured to test Windows and
-Ubuntu with Python 3.10 and 3.12, build the distributions, and run the complete
-demo against an installed wheel outside the source checkout.
+The [CI workflow](.github/workflows/tests.yml) is configured to test Jittor CPU
+evaluation on Ubuntu with Python 3.10, 3.11 and 3.12. It builds the distributions and runs actual
+Jittor operators and the complete demo against an installed wheel outside the
+source checkout, without PyTorch, Accelerate or xformers installed.
 
 ## 💫 Contributing
 
 Bug reports, documentation improvements and focused pull requests are welcome.
 For an evaluation issue, include the toolkit version, command, a small synthetic
 QA/prediction example, and the expected and actual behavior in an
-[issue](https://github.com/LeNcyer/SciFigBench-toolkit/issues).
+[issue](https://github.com/LeNcyer/SciFigBench-jittor/issues).
 
 <a id="citation"></a>
 <a id="license-and-citation"></a>
@@ -245,6 +280,6 @@ QA/prediction example, and the expected and actual behavior in an
 questions use the same license. See [LICENSE](LICENSE) and
 [CITATION.cff](CITATION.cff).
 
-When citing this code preview, identify **SciFigBench Toolkit, version 0.1.0**
-and the planned tag `v0.1.0-preview`. Dataset availability and future benchmark
+When citing this code preview, identify **SciFigBench-Jittor, version 0.2.0**
+and the planned tag `v0.2.0-preview`. Dataset availability and future benchmark
 versions are tracked separately in [Data availability](DATA_AVAILABILITY.md).

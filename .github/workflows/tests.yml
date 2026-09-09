@@ -1,4 +1,4 @@
-name: Tests and wheel installation
+name: Jittor CPU tests and wheel installation
 
 on:
   push:
@@ -13,16 +13,28 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        python: ["3.10", "3.12"]
-    runs-on: ${{ matrix.os }}
+        python: ["3.10", "3.11", "3.12"]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    env:
+      use_cuda: "0"
+      use_mkl: "0"
+      DISABLE_MULTIPROCESSING: "1"
+      PYTHONNOUSERSITE: "1"
+      cc_path: g++
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
       - uses: astral-sh/setup-uv@v6
-      - run: uv sync --frozen --extra dev
+      - name: Install CPU compilation dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential python3-dev libomp-dev
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/jittor
+          key: jittor-cpu-${{ runner.os }}-${{ matrix.python }}-${{ hashFiles('uv.lock', 'src/scifigbench/backend.py') }}
+      - run: uv sync --frozen --extra dev --python "${{ matrix.python }}"
       - run: uv run --frozen --extra dev python -m ruff check .
       - run: uv run --frozen --extra dev python -m pytest
       - run: uv build
@@ -30,5 +42,5 @@ jobs:
         run: uv run --frozen --extra dev python scripts/check_wheel.py --work-dir "${{ runner.temp }}/scifigbench-wheel-check"
       - uses: actions/upload-artifact@v4
         with:
-          name: distributions-${{ matrix.os }}-${{ matrix.python }}
+          name: distributions-jittor-cpu-${{ matrix.python }}
           path: dist/

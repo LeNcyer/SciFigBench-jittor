@@ -71,6 +71,14 @@ also expose additional_metrics. Input hashes cover the original file bytes,
 including newline/BOM choices. Versions and SHA-256 hashes identify an evaluation;
 no absolute source paths or environment secrets are recorded.
 
+Reports produced by version 0.2.0 use schema_version `1.1` and also require
+`execution_backend`, containing `name` (`jittor`), `version`, `device` (`cpu`),
+`dtype` (`float64`), and `assignment_solver` with `name` (`scipy`) and `version`.
+These values are obtained from the executing runtime. The packaged report schema
+continues to accept legacy schema `1.0` reports without this object. QA and
+prediction formats are unchanged; public Python functions still return ordinary
+Python numbers and dictionaries.
+
 Per-question records include qid, task, gt, pred_raw, pred_parsed, score, parse_ok,
 status and stratum. Status is ok, missing or parse_failure. Missing questions
 have parse_ok=false but are counted separately from n_parse_fail.

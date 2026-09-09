@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .backend import BackendError, cpu_runtime
 from .evaluate import evaluate
 from .io import TASKS, load_qa
 from .render import image_path, render_qa
@@ -46,6 +47,8 @@ def main(argv: list[str] | None = None) -> int:
             rows = load_qa(args.qa)
             destination = Path(args.out_dir)
             outputs = [destination / f"{q['task']}__{q['qid']}.png" for q in rows]
+            if len({output.name.casefold() for output in outputs}) != len(outputs):
+                raise ValueError("render output names collide when case is ignored; use distinct qids")
             sources = {image_path(q, args.data_root) for q in rows}
             for output in outputs:
                 if output.resolve() in sources:
@@ -61,12 +64,13 @@ def main(argv: list[str] | None = None) -> int:
                     raise ValueError(f"qid={q['qid']}: {exc}") from exc
             print(f"Rendered {len(rows)} images to {destination}")
         else:
-            report, _ = evaluate(
-                args.qa, args.pred, task=args.task, report_dir=args.report_dir,
-                normalize=not args.no_latex_normalize, overwrite=args.overwrite,
-            )
+            with cpu_runtime():
+                report, _ = evaluate(
+                    args.qa, args.pred, task=args.task, report_dir=args.report_dir,
+                    normalize=not args.no_latex_normalize, overwrite=args.overwrite,
+                )
             print(json.dumps(report, ensure_ascii=False, indent=2))
-    except (OSError, ValueError) as exc:
+    except (OSError, ValueError, BackendError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     return 0

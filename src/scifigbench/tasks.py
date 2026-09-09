@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from . import backend
 from .io import answer_list
 from .metrics import anls, position_anls, set_anls
 from .parsers import parse_bool, parse_int, parse_json_list
@@ -48,7 +49,7 @@ def score_question(q: dict, raw, *, missing: bool, normalize: bool) -> dict:
     elif task == "information_flow_tracing":
         score = set_anls(gt, parsed, normalize=normalize)
     else:
-        score = float(parsed == gt)
+        score = backend.exact_match(gt, parsed)
     result = {
         "qid": q["qid"], "task": task, "gt": gt, "pred_raw": raw,
         "pred_parsed": parsed, "score": score, "parse_ok": parse_ok,
@@ -61,7 +62,7 @@ def score_question(q: dict, raw, *, missing: bool, normalize: bool) -> dict:
 
 
 def _mean(scores: list[float]) -> float:
-    return sum(scores) / len(scores) if scores else 0.0
+    return backend.mean(scores)
 
 
 def aggregate(task: str, rows: list[dict]) -> dict:

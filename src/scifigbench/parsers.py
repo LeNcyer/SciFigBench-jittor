@@ -21,7 +21,10 @@ def parse_int(raw) -> int | None:
     if raw is None or isinstance(raw, (bool, list, dict)):
         return None
     match = _INT.search(str(raw))
-    return int(match.group()) if match else None
+    try:
+        return int(match.group()) if match else None
+    except ValueError:
+        return None
 
 
 def parse_json_list(raw) -> list[str] | None:
@@ -33,12 +36,12 @@ def parse_json_list(raw) -> list[str] | None:
     text = (fence.group(1) if fence else raw).strip()
     try:
         value = json.loads(text)
-    except ValueError:
+    except (ValueError, RecursionError):
         start = text.find("[")
         if start < 0:
             return None
         try:
             value, _ = json.JSONDecoder().raw_decode(text[start:])
-        except ValueError:
+        except (ValueError, RecursionError):
             return None
     return value if isinstance(value, list) and all(isinstance(x, str) for x in value) else None
