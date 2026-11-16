@@ -1,0 +1,11 @@
+{"qid": "SYN-dense-single", "response": "[\"Encoder\"]"}
+{"qid": "SYN-dense-path", "response": "[\"Input\", \"Encoder\", \"Output\"]"}
+{"qid": "SYN-edge-positive", "response": "true"}
+{"qid": "SYN-edge-reverse", "response": "false"}
+{"qid": "SYN-degree-in", "response": "3"}
+{"qid": "SYN-degree-out", "response": "1"}
+{"qid": "SYN-path-positive", "response": "true"}
+{"qid": "SYN-path-reverse", "response": "false"}
+{"qid": "SYN-flow-in", "response": "[\"Input\", \"Skip\", \"Skip\"]"}
+{"qid": "SYN-flow-out", "response": "[\"Output\"]"}
+{"qid": "SYN-flow-empty", "response": "[]"}

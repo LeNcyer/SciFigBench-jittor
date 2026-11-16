@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "Please cite the SciFigBench paper and identify the Jittor toolkit version."
+type: software
+title: "SciFigBench-Jittor: Jittor CPU Evaluation Toolkit"
+authors:
+  - family-names: Wu
+    given-names: Lijia
+  - family-names: Li
+    given-names: Zheng
+  - family-names: Liu
+    given-names: Yuxuan
+  - family-names: Zhang
+    given-names: Jingwen
+  - family-names: Zhao
+    given-names: Penghai
+  - family-names: Li
+    given-names: Xiang
+version: 0.3.0
+repository-code: "https://github.com/LeNcyer/SciFigBench-jittor"
+license: MIT
+preferred-citation:
+  type: conference-paper
+  title: "SciFigBench: A Benchmark for Scientific Method Figure Understanding"
+  authors:
+    - family-names: Wu
+      given-names: Lijia
+    - family-names: Li
+      given-names: Zheng
+    - family-names: Liu
+      given-names: Yuxuan
+    - family-names: Zhang
+      given-names: Jingwen
+    - family-names: Zhao
+      given-names: Penghai
+    - family-names: Li
+      given-names: Xiang
+  collection-title: "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing"
+  year: 2026
+  url: "https://arxiv.org/abs/2610.27087"

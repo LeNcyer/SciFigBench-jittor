@@ -1,0 +1,72 @@
+name: Jittor CPU tests and distributions
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.11", "3.12"]
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    env:
+      use_cuda: "0"
+      use_mkl: "0"
+      DISABLE_MULTIPROCESSING: "1"
+      PYTHONNOUSERSITE: "1"
+      cc_path: g++
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: astral-sh/setup-uv@v6
+      - name: Install CPU compilation dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential python3-dev libomp-dev
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/jittor
+          key: jittor-cpu-${{ runner.os }}-${{ matrix.python }}-${{ hashFiles('uv.lock', 'src/scifigbench/backend.py') }}
+      - run: uv sync --frozen --extra dev --python "${{ matrix.python }}"
+      - run: uv run --frozen --extra dev python -m ruff check .
+      - run: uv run --frozen --extra dev python -m pytest --junitxml=test-results.xml
+      - run: uv build --out-dir dist/0.3.0
+      - run: uv run --frozen --extra dev python -m twine check --strict dist/0.3.0/*
+      - name: Verify artifacts and packaged README
+        run: |
+          uv run --frozen --extra dev python .github/scripts/verify_dist.py --dist dist/0.3.0 --provenance "${{ runner.temp }}/build-provenance.json"
+          uv run --frozen --extra dev python .github/scripts/check_readme.py --dist dist/0.3.0 --preview "${{ runner.temp }}/readme.html"
+      - name: Isolated wheel execution and synthetic demo
+        run: uv run --frozen --extra dev python scripts/check_wheel.py --artifact-dir dist/0.3.0 --work-dir "${{ runner.temp }}/wheel-check"
+      - name: Install wheel and source independently
+        run: uv run --frozen --extra dev python .github/scripts/smoke_install.py --dist dist/0.3.0
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        if: always()
+        with:
+          name: validation-python-${{ matrix.python }}
+          path: |
+            dist/0.3.0/*
+            test-results.xml
+
+  windows-inputs:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen --extra dev
+      - name: Data, parsing, rendering and explicit unsupported-runtime behavior
+        run: uv run --frozen --extra dev python -m pytest tests/test_parsing.py tests/test_public_schema.py tests/test_download.py tests/test_rendering_and_input_boundary.py tests/test_release_preflight.py tests/test_runtime_boundary.py -k "not QA_only_loading_and_scoring"

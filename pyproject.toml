@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "scifigbench-jittor"
+version = "0.3.0"
+license = "MIT"
+license-files = ["LICENSE"]
+description = "Jittor CPU evaluation, data loading and visual inputs for SciFigBench"
+readme = "README.md"
+authors = [
+    {name = "Lijia Wu"},
+    {name = "Zheng Li"},
+    {name = "Yuxuan Liu"},
+    {name = "Jingwen Zhang"},
+    {name = "Penghai Zhao"},
+    {name = "Xiang Li"},
+]
+keywords = ["benchmark", "scientific-figures", "vision-language-models", "evaluation"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: POSIX :: Linux",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.10,<3.13"
+dependencies = ["Pillow>=10.1,<13", "jittor==1.3.11.0", "numpy>=1.24,<2", "scipy>=1.10,<2", "huggingface-hub>=0.24,<2"]
+
+[project.urls]
+Homepage = "https://github.com/LeNcyer/SciFigBench-jittor"
+Repository = "https://github.com/LeNcyer/SciFigBench-jittor"
+Dataset = "https://huggingface.co/datasets/LeNcyer/SciFigBench"
+Paper = "https://arxiv.org/abs/2610.27087"
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10", "build>=1.2,<2", "tomli>=2; python_version < '3.11'"]
+dev = ["pytest>=8,<10", "build>=1.2,<2", "tomli>=2; python_version < '3.11'", "ruff>=0.11,<1", "twine>=6,<7", "readme-renderer[md]==44.0"]
+
+[project.scripts]
+scifigbench = "scifigbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["scifigbench*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E9", "F"]
+exclude = ["tests/reference_upstream/**"]

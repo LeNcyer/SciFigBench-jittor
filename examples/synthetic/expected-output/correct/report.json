@@ -1,0 +1,224 @@
+{
+  "package_version": "0.3.0",
+  "dataset_version": "synthetic-v2",
+  "evaluation_mode": "Full Evaluation",
+  "task": "all",
+  "n_qa_total": 11,
+  "n_predictions": 11,
+  "n_matched": 11,
+  "n_missing_pred": 0,
+  "coverage": 1.0,
+  "coverage_pct": 100.0,
+  "execution_backend": {
+    "name": "jittor",
+    "version": "1.3.11.0",
+    "device": "cpu",
+    "dtype": "float64",
+    "assignment_solver": {
+      "name": "scipy",
+      "version": "1.15.3"
+    }
+  },
+  "prediction_field": "response",
+  "latex_normalize": true,
+  "qa_sha256": {
+    "qa_dense_content_perception.jsonl": "4470c1b35935730befcadc1b38ff199b1a613e75c9f0c1b3018b7f5c38b5c2c5",
+    "qa_edge_level_verification.jsonl": "51efab1b2b526d620c88eff63ca96d0aac1c24cd541b41abed1a3ad7289b935f",
+    "qa_node_level_degree_counting.jsonl": "8a0011cfafb974c3fd6b11cce53006a4b9c51f2a7e60682ebb753169b32a3852",
+    "qa_path_level_reachability.jsonl": "ce84c142420d7a5bc32851b17116dec1bd886d380b2763f474ad7cfa601157d4",
+    "qa_information_flow_tracing.jsonl": "bbcf20148604876299103696b8a06f0f9d1f4c2281d83e34966d961dfb3da0a7"
+  },
+  "tasks": {
+    "dense_content_perception": {
+      "n_qa_total": 2,
+      "n_total": 2,
+      "n_matched": 2,
+      "n_missing_pred": 0,
+      "coverage": 1.0,
+      "coverage_pct": 100.0,
+      "evaluation_mode": "Full Evaluation",
+      "n_parse_fail": 0,
+      "primary_metric": {
+        "name": "Position-wise ANLS",
+        "value": 1.0
+      },
+      "additional_metrics": {
+        "set-ANLS*": {
+          "value": 1.0
+        }
+      }
+    },
+    "edge_level_verification": {
+      "n_qa_total": 2,
+      "n_total": 2,
+      "n_matched": 2,
+      "n_missing_pred": 0,
+      "coverage": 1.0,
+      "coverage_pct": 100.0,
+      "evaluation_mode": "Full Evaluation",
+      "n_parse_fail": 0,
+      "primary_metric": {
+        "name": "Accuracy",
+        "value": 1.0
+      }
+    },
+    "node_level_degree_counting": {
+      "n_qa_total": 2,
+      "n_total": 2,
+      "n_matched": 2,
+      "n_missing_pred": 0,
+      "coverage": 1.0,
+      "coverage_pct": 100.0,
+      "evaluation_mode": "Full Evaluation",
+      "n_parse_fail": 0,
+      "primary_metric": {
+        "name": "Accuracy",
+        "value": 1.0
+      }
+    },
+    "path_level_reachability": {
+      "n_qa_total": 2,
+      "n_total": 2,
+      "n_matched": 2,
+      "n_missing_pred": 0,
+      "coverage": 1.0,
+      "coverage_pct": 100.0,
+      "evaluation_mode": "Full Evaluation",
+      "n_parse_fail": 0,
+      "primary_metric": {
+        "name": "Accuracy",
+        "value": 1.0
+      }
+    },
+    "information_flow_tracing": {
+      "n_qa_total": 3,
+      "n_total": 3,
+      "n_matched": 3,
+      "n_missing_pred": 0,
+      "coverage": 1.0,
+      "coverage_pct": 100.0,
+      "evaluation_mode": "Full Evaluation",
+      "n_parse_fail": 0,
+      "primary_metric": {
+        "name": "Set-based ANLS*",
+        "value": 1.0
+      }
+    }
+  },
+  "per_question": [
+    {
+      "qid": "SYN-dense-single",
+      "task": "dense_content_perception",
+      "score": 1.0,
+      "set_score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": [
+        "Encoder"
+      ],
+      "gt": [
+        "Encoder"
+      ]
+    },
+    {
+      "qid": "SYN-dense-path",
+      "task": "dense_content_perception",
+      "score": 1.0,
+      "set_score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": [
+        "Input",
+        "Encoder",
+        "Output"
+      ],
+      "gt": [
+        "Input",
+        "Encoder",
+        "Output"
+      ]
+    },
+    {
+      "qid": "SYN-edge-positive",
+      "task": "edge_level_verification",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": "true",
+      "gt": "true"
+    },
+    {
+      "qid": "SYN-edge-reverse",
+      "task": "edge_level_verification",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": "false",
+      "gt": "false"
+    },
+    {
+      "qid": "SYN-degree-in",
+      "task": "node_level_degree_counting",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": 3,
+      "gt": 3
+    },
+    {
+      "qid": "SYN-degree-out",
+      "task": "node_level_degree_counting",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": 1,
+      "gt": 1
+    },
+    {
+      "qid": "SYN-path-positive",
+      "task": "path_level_reachability",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": "true",
+      "gt": "true"
+    },
+    {
+      "qid": "SYN-path-reverse",
+      "task": "path_level_reachability",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": "false",
+      "gt": "false"
+    },
+    {
+      "qid": "SYN-flow-in",
+      "task": "information_flow_tracing",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": [
+        "Input",
+        "Skip",
+        "Skip"
+      ],
+      "gt": [
+        "Input",
+        "Skip",
+        "Skip"
+      ]
+    },
+    {
+      "qid": "SYN-flow-out",
+      "task": "information_flow_tracing",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": [
+        "Output"
+      ],
+      "gt": [
+        "Output"
+      ]
+    },
+    {
+      "qid": "SYN-flow-empty",
+      "task": "information_flow_tracing",
+      "score": 1.0,
+      "parse_ok": true,
+      "pred_parsed": [],
+      "gt": []
+    }
+  ]
+}
